@@ -1,0 +1,11 @@
+<div>
+  <form [formGroup]="formGroup">
+      <mat-form-field class="example-full-width">
+        <mat-label>Lambda</mat-label>
+        <input matInput formControlName="lambda" type="number">
+      </mat-form-field>
+    </form>
+  <div *ngFor="let value of values?.slice(0,100)">
+    {{ value }} : {{ this.transform(value) }}
+  </div>
+</div>

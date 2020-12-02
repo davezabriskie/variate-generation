@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import {
   FormGroup,
 } from '@angular/forms';
-import { RandomNumbers } from 'src/app/random-number/random-numbers';
+import { Sample } from 'src/app/sample/sample';
 import { saveAs } from 'file-saver';
 
 @Component({
@@ -13,7 +13,7 @@ import { saveAs } from 'file-saver';
 })
 export class GraphComponent {
 
-  private randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  private sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
 
   values: number[] = [];
@@ -24,7 +24,7 @@ export class GraphComponent {
   }];
 
   constructor(private changeDetectorRef: ChangeDetectorRef) {
-    this.randomNumbers.numbers$.subscribe(n => {
+    this.sample.numbers$.subscribe(n => {
       this.values = n;
       this.changeDetectorRef.markForCheck();
     });

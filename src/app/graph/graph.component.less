@@ -17,6 +17,16 @@
     .scrollable {
       height: calc(100% - 40px);
       overflow-y: scroll;
+
+      .sample-data-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+
+        .sample-data-input {
+          text-align: right;
+        }
+      }
     }
   }
 }

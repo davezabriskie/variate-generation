@@ -1,7 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
 import { Gamma } from './gamma';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { RandomNumbers } from 'src/app/random-number/random-numbers';
+import { Sample } from 'src/app/sample/sample';
+import { debounce } from 'rxjs/operators';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-gamma',
@@ -12,7 +14,7 @@ import { RandomNumbers } from 'src/app/random-number/random-numbers';
 export class GammaComponent implements OnInit {
 
   private gamma!: Gamma;
-  private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   alphaControl: FormControl = new FormControl(1, Validators.min(0.0001));
   betaControl: FormControl = new FormControl(1, Validators.min(0.0001));
@@ -27,14 +29,14 @@ export class GammaComponent implements OnInit {
       beta: this.betaControl
     });
     this.gamma = new Gamma(this.alphaControl.value, this.betaControl.value);
-    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
-    this.alphaControl.valueChanges.subscribe((change: number) => {
+    this.sample.numbers$.subscribe(n => this.tallyResults(n));
+    this.alphaControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.gamma.updateShape(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
-    this.betaControl.valueChanges.subscribe((change: number) => {
+    this.betaControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.gamma.updateRate(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

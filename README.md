@@ -26,7 +26,7 @@ This project generates the pdf of various variate functions.
 
 ## Remaining Work
 
-* Add support for updating number of sample values (currently limited to 150)
+* Add support for updating number of sample values (currently limited to 250)
 * Add dialog for downloaded file name
     * Possbily just auto generate based on parameters (e.g. exponential_0.5_from_0_to_10.tsv)
 * Refactor common code
@@ -34,3 +34,4 @@ This project generates the pdf of various variate functions.
     * Function components share similar functionality and interactions with dataset
     * Add some typing around ngx-chart data
 * Add potential for multiple distributions graphed at once
+* Add tests around validation and expected values

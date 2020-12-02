@@ -1,8 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { Binomial } from './binomial';
-import { RandomNumbers } from 'src/app/random-number/random-numbers';
+import { Sample } from 'src/app/sample/sample';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Gamma } from '../gamma/gamma';
+import { debounce } from 'rxjs/operators';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-binomial',
@@ -13,7 +14,7 @@ import { Gamma } from '../gamma/gamma';
 export class BinomialComponent implements OnInit {
 
   private binomial!: Binomial;
-  private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   probabilityControl: FormControl = new FormControl(0.5, [Validators.min(0), Validators.max(1)]);
   sizeControl: FormControl = new FormControl(10, Validators.min(0.0001));
@@ -28,14 +29,14 @@ export class BinomialComponent implements OnInit {
       size: this.sizeControl
     });
     this.binomial = new Binomial(this.probabilityControl.value, this.sizeControl.value);
-    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+    this.sample.numbers$.pipe(debounce(() => interval(300))).subscribe(n => this.tallyResults(n));
     this.probabilityControl.valueChanges.subscribe((change: number) => {
       this.binomial.updateProbability(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
-    this.sizeControl.valueChanges.subscribe((change: number) => {
+    this.sizeControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.binomial.updateSize(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

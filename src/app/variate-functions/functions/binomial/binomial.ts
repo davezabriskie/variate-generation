@@ -25,11 +25,7 @@ export class Binomial {
   calculateValue(input: number): number {
     if (input > 0) {
       const choose = factorial(this.size) / (factorial(input) * factorial(this.size - input));
-      const m = choose * Math.pow(this.probability, input) * Math.pow(1 - this.probability, this.size - input);
-      if (m < 0) {
-        console.log(m)
-      }
-      return m;
+      return choose * Math.pow(this.probability, input) * Math.pow(1 - this.probability, this.size - input);
     }
     return 0;
   }

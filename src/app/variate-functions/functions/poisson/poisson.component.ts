@@ -1,7 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { RandomNumbers } from 'src/app/random-number/random-numbers';
+import { Sample } from 'src/app/sample/sample';
 import { Poisson } from './poisson';
+import { debounce } from 'rxjs/operators';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-poisson',
@@ -12,7 +14,7 @@ import { Poisson } from './poisson';
 export class PoissonComponent implements OnInit {
 
   private poisson!: Poisson;
-  private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   lambdaControl: FormControl = new FormControl(1, Validators.min(0.0001));
 
@@ -25,10 +27,10 @@ export class PoissonComponent implements OnInit {
       lambda: this.lambdaControl
     });
     this.poisson = new Poisson(this.lambdaControl.value);
-    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
-    this.lambdaControl.valueChanges.subscribe((change: number) => {
+    this.sample.numbers$.subscribe(n => this.tallyResults(n));
+    this.lambdaControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.poisson.setLambda(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

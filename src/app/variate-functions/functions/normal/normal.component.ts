@@ -1,7 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { Normal } from './normal';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { RandomNumbers } from 'src/app/random-number/random-numbers';
+import { Sample } from 'src/app/sample/sample';
+import { debounce } from 'rxjs/operators';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-normal',
@@ -12,7 +14,7 @@ import { RandomNumbers } from 'src/app/random-number/random-numbers';
 export class NormalComponent implements OnInit {
 
   private normal!: Normal;
-  private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   meanControl: FormControl = new FormControl(0);
   standardDeviationControl: FormControl = new FormControl(1, Validators.min(0.001));
@@ -27,14 +29,14 @@ export class NormalComponent implements OnInit {
       standardDeviation: this.standardDeviationControl
     });
     this.normal = new Normal(this.standardDeviationControl.value, this.meanControl.value);
-    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
-    this.standardDeviationControl.valueChanges.subscribe((change: number) => {
+    this.sample.numbers$.subscribe(n => this.tallyResults(n));
+    this.standardDeviationControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.normal.setStandardDeviation(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
-    this.meanControl.valueChanges.subscribe((change: number) => {
+    this.meanControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.normal.setMean(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

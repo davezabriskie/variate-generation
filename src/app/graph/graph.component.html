@@ -14,8 +14,9 @@
       <h4>First 100 datapoints</h4>
       <div class="scrollable">
         <div *ngFor="let value of mapValues | keyvalue; let i = index">
-          <div *ngIf="i < 100">
-            {{ value.key }} : {{ value.value }}
+          <div *ngIf="i < 100" class="sample-data-list">
+            <span class="sample-data-input">{{ value.key | number: '1.0-4' }}</span>
+            <span class="sample-data-probability">{{ value.value }}</span> 
           </div>
         </div>
       </div>

@@ -1,31 +1,29 @@
 import { BehaviorSubject } from 'rxjs';
 
-export class RandomNumbers {
-  private static instance: RandomNumbers;
-  private backingRandomNumbers: number[] = [];
-  private sampleSize: number = 150;
+export class Sample {
+
+  private static instance: Sample;
+  private sampleSize: number = 250;
   private lowerBound: number = 0;
   private upperBound: number = 10;
   private delta: number = 10;
   numbers$: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
 
   private constructor() {
-    this.buildBackingRandomNumbers();
     this.buildNumbers();
   }
 
-  static getInstance(): RandomNumbers {
-    if (!RandomNumbers.instance) {
-      RandomNumbers.instance = new RandomNumbers();
+  static getInstance(): Sample {
+    if (!Sample.instance) {
+      Sample.instance = new Sample();
     }
 
-    return RandomNumbers.instance;
+    return Sample.instance;
   }
 
   generateNewArray(size: number): void {
     this.sampleSize = size;
     if (size > 0) {
-      this.buildBackingRandomNumbers();
       this.buildNumbers();
     }
   }
@@ -46,17 +44,10 @@ export class RandomNumbers {
     }
   }
 
-  private buildBackingRandomNumbers(): void {
-    this.backingRandomNumbers = [];
-    [...Array(this.sampleSize).keys()].forEach((l) => {
-      this.backingRandomNumbers.push(Math.random());
-    });
-  }
-
   private buildNumbers(): void {
     const numbers: number[] = [];
     [...Array(this.sampleSize).keys()].forEach((l, index) => {
-      numbers.push(this.lowerBound + this.backingRandomNumbers[index] * (this.delta));
+      numbers.push(this.lowerBound + (1 + index) * (this.delta / this.sampleSize));
     });
     this.numbers$.next(numbers.sort());
   }

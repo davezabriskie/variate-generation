@@ -1,7 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Exponential } from './exponential';
-import { RandomNumbers } from 'src/app/random-number/random-numbers';
+import { Sample } from 'src/app/sample/sample';
+import { debounce } from 'rxjs/operators';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-exponential',
@@ -12,7 +14,7 @@ import { RandomNumbers } from 'src/app/random-number/random-numbers';
 export class ExponentialComponent implements OnInit {
 
   private exp!: Exponential;
-  private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  private readonly sample: Sample = Sample.getInstance();
   lambdaControl: FormControl = new FormControl(1, Validators.min(0.0001));
   formGroup!: FormGroup;
 
@@ -25,10 +27,10 @@ export class ExponentialComponent implements OnInit {
       lambda: this.lambdaControl
     });
     this.exp = new Exponential(this.lambdaControl.value);
-    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
-    this.lambdaControl.valueChanges.subscribe((change: number) => {
+    this.sample.numbers$.subscribe(n => this.tallyResults(n));
+    this.lambdaControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.exp.setLambda(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

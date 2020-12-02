@@ -1,7 +1,9 @@
 import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Weibull } from './weibull';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { RandomNumbers } from 'src/app/random-number/random-numbers';
+import { Sample } from 'src/app/sample/sample';
+import { debounce } from 'rxjs/operators';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-weibull',
@@ -12,7 +14,7 @@ import { RandomNumbers } from 'src/app/random-number/random-numbers';
 export class WeibullComponent implements OnInit {
 
   private weibull!: Weibull;
-  private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   shapeControl: FormControl = new FormControl(1, Validators.min(0.001));
   scaleControl: FormControl = new FormControl(1, Validators.min(0.001));
@@ -27,14 +29,14 @@ export class WeibullComponent implements OnInit {
       scale: this.scaleControl
     });
     this.weibull = new Weibull(this.shapeControl.value, this.scaleControl.value);
-    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
-    this.shapeControl.valueChanges.subscribe((change: number) => {
+    this.sample.numbers$.subscribe(n => this.tallyResults(n));
+    this.shapeControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.weibull.updateShape(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
-    this.scaleControl.valueChanges.subscribe((change: number) => {
+    this.scaleControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.weibull.updateScale(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

@@ -1,7 +1,9 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { Bernoulli } from './bernoulli';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { RandomNumbers } from 'src/app/random-number/random-numbers';
+import { Sample } from 'src/app/sample/sample';
+import { debounce } from 'rxjs/operators';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-bernoulli',
@@ -12,7 +14,7 @@ import { RandomNumbers } from 'src/app/random-number/random-numbers';
 export class BernoulliComponent implements OnInit {
 
   private bernoulli!: Bernoulli;
-  private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  private readonly sample: Sample = Sample.getInstance();
   probabilityControl: FormControl = new FormControl(0.5, [Validators.min(0), Validators.max(1)]);
   formGroup!: FormGroup;
 
@@ -25,10 +27,10 @@ export class BernoulliComponent implements OnInit {
       probability: this.probabilityControl
     });
     this.bernoulli = new Bernoulli(this.probabilityControl.value);
-    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
-    this.probabilityControl.valueChanges.subscribe((change: number) => {
+    this.sample.numbers$.subscribe(n => this.tallyResults(n));
+    this.probabilityControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
       this.bernoulli.updateProbability(change);
-      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
+      this.sample.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { RandomNumbers } from './random-number/random-numbers';
 
 @Component({
   selector: 'app-root',

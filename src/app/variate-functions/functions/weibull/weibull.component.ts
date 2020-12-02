@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Weibull } from './weibull';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
 import { Gamma } from '../gamma/gamma';
 
@@ -12,10 +12,10 @@ import { Gamma } from '../gamma/gamma';
 export class WeibullComponent implements OnInit {
 
   private weibull!: Weibull;
-  private shapeControl: FormControl = new FormControl(1);
-  private scaleControl: FormControl = new FormControl(1);
   private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
   formGroup!: FormGroup;
+  shapeControl: FormControl = new FormControl(1, Validators.min(0.001));
+  scaleControl: FormControl = new FormControl(1, Validators.min(0.001));
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 

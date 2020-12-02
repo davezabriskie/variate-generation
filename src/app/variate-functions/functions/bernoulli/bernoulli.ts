@@ -8,7 +8,7 @@ export class Bernoulli {
   }
 
   updateProbability(probability: number): void {
-    if (probability > 0 && probability < 1) {
+    if (probability >= 0 && probability <= 1) {
       this.probability = probability;
     }
   }

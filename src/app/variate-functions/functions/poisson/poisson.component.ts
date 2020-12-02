@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
-import { Exponential } from '../exponential/exponential';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
 import { Poisson } from './poisson';
 
@@ -11,11 +10,11 @@ import { Poisson } from './poisson';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PoissonComponent implements OnInit {
-  
+
   private poisson!: Poisson;
-  private lambdaControl: FormControl = new FormControl(1);
   private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
   formGroup!: FormGroup;
+  lambdaControl: FormControl = new FormControl(1, Validators.min(0.0001));
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 

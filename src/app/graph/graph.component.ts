@@ -23,19 +23,6 @@ export class GraphComponent {
     series: []
   }];
 
-    // todos
-    // X: break out form into function specific
-    // X: add header buttons for exporting to tsv (value, prob)
-    // X: add scaling for random numbers
-    // X: add more functions (bern, gamma, weibull)
-    // readme
-
-
-    // nice to have todos
-    // X: add graphing
-    // add poisson and one other?
-    // maybe add state for flow?
-
   constructor(private changeDetectorRef: ChangeDetectorRef) {
     this.randomNumbers.numbers$.pipe().subscribe(n => {
       this.values = n;

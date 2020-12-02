@@ -1,6 +1,7 @@
 <form [formGroup]="formGroup">
   <mat-form-field>
-    <mat-label>Lambda</mat-label>
+    <mat-label>Lambda (λ)</mat-label>
     <input matInput formControlName="lambda" type="number">
+    <mat-error *ngIf="lambdaControl.invalid">Must be (0, ∞)</mat-error>
   </mat-form-field>
 </form>

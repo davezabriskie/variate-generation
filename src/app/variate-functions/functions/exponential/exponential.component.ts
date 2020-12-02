@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Exponential } from './exponential';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
 
@@ -12,8 +12,8 @@ import { RandomNumbers } from 'src/app/random-number/random-numbers';
 export class ExponentialComponent implements OnInit {
 
   private exp!: Exponential;
-  private lambdaControl: FormControl = new FormControl(1);
   private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  lambdaControl: FormControl = new FormControl(1, Validators.min(0.0001));
   formGroup!: FormGroup;
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();

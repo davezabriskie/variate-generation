@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Geometric } from './geometric';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
 
 @Component({
@@ -11,9 +11,9 @@ import { RandomNumbers } from 'src/app/random-number/random-numbers';
 export class GeometricComponent implements OnInit {
 
   private geometric!: Geometric;
-  private probabilityControl: FormControl = new FormControl(0.5);
   private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
   formGroup!: FormGroup;
+  probabilityControl: FormControl = new FormControl(0.5, [Validators.min(0.0001), Validators.max(1)]);
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 

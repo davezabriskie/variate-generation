@@ -1,8 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { Bernoulli } from './bernoulli';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
-import { Exponential } from '../exponential/exponential';
 
 @Component({
   selector: 'app-bernoulli',
@@ -13,8 +12,8 @@ import { Exponential } from '../exponential/exponential';
 export class BernoulliComponent implements OnInit {
 
   private bernoulli!: Bernoulli;
-  private probabilityControl: FormControl = new FormControl(0.5);
   private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
+  probabilityControl: FormControl = new FormControl(0.5, [Validators.min(0), Validators.max(1)]);
   formGroup!: FormGroup;
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();

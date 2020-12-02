@@ -1,10 +1,12 @@
 <form [formGroup]="formGroup">
-    <mat-form-field>
-      <mat-label>Shape</mat-label>
-      <input matInput formControlName="shape" type="number">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Scale</mat-label>
-      <input matInput formControlName="scale" type="number">
-    </mat-form-field>
-  </form>
+  <mat-form-field>
+    <mat-label>Shape (k)</mat-label>
+    <input matInput formControlName="shape" type="number">
+    <mat-error *ngIf="shapeControl.invalid">Must be (0, ∞)</mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Scale (λ)</mat-label>
+    <input matInput formControlName="scale" type="number">
+    <mat-error *ngIf="scaleControl.invalid">Must be (0, ∞)</mat-error>
+  </mat-form-field>
+</form>

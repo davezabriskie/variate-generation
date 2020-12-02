@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
 import { Gamma } from './gamma';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
 
 @Component({
@@ -12,10 +12,10 @@ import { RandomNumbers } from 'src/app/random-number/random-numbers';
 export class GammaComponent implements OnInit {
 
   private gamma!: Gamma;
-  private alphaControl: FormControl = new FormControl(1);
-  private betaControl: FormControl = new FormControl(1);
   private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
   formGroup!: FormGroup;
+  alphaControl: FormControl = new FormControl(1, Validators.min(0.0001));
+  betaControl: FormControl = new FormControl(1, Validators.min(0.0001));
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 

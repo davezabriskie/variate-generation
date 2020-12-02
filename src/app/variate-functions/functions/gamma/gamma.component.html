@@ -1,10 +1,12 @@
 <form [formGroup]="formGroup">
   <mat-form-field>
-    <mat-label>Alpha</mat-label>
+    <mat-label>Shape (α)</mat-label>
     <input matInput formControlName="alpha" type="number">
+    <mat-error *ngIf="alphaControl.invalid">Must be (0, ∞)</mat-error>
   </mat-form-field>
   <mat-form-field>
-    <mat-label>Beta</mat-label>
+    <mat-label>Scale (β)</mat-label>
     <input matInput formControlName="beta" type="number">
+    <mat-error *ngIf="betaControl.invalid">Must be (0, ∞)</mat-error>
   </mat-form-field>
 </form>

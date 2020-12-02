@@ -1,10 +1,11 @@
 <form [formGroup]="formGroup">
     <mat-form-field>
-      <mat-label>Mean</mat-label>
+      <mat-label>Mean (μ)</mat-label>
       <input matInput formControlName="mean" type="number">
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Standard Deviation</mat-label>
+      <mat-label>Standard Deviation (σ)</mat-label>
       <input matInput formControlName="standardDeviation" type="number">
+      <mat-error *ngIf="standardDeviationControl.invalid">Must be (0, ∞)</mat-error>
     </mat-form-field>
   </form>

@@ -9,7 +9,7 @@ export class Normal {
   }
 
   setStandardDeviation(standardDeviation: number): void {
-    if (standardDeviation !== 0) {
+    if (standardDeviation > 0) {
       this.standardDeviation = standardDeviation;
     }
   }

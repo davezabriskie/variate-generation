@@ -1,5 +1,6 @@
 <div>
   <app-function-select (resultsTallied)="setResults($event)"></app-function-select>
+  <button (click)="saveFile()">Export to TSV</button>
   <div>
     <ngx-charts-line-chart
       [xAxis]="true"

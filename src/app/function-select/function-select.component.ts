@@ -16,6 +16,7 @@ export class FunctionSelectComponent implements OnInit {
     'Gamma',
     'Geometric',
     'Normal',
+    'Poisson',
     'Weibull'
   ];
   functionFormControl: FormControl = new FormControl(this.functions[0]);

@@ -18,6 +18,7 @@ import { BernoulliComponent } from './variate-functions/functions/bernoulli/bern
 import { GeometricComponent } from './variate-functions/functions/geometric/geometric.component';
 import { NormalComponent } from './variate-functions/functions/normal/normal.component';
 import { WeibullComponent } from './variate-functions/functions/weibull/weibull.component';
+import { PoissonComponent } from './variate-functions/functions/poisson/poisson.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { WeibullComponent } from './variate-functions/functions/weibull/weibull.
     BernoulliComponent,
     GeometricComponent,
     NormalComponent,
-    WeibullComponent
+    WeibullComponent,
+    PoissonComponent
   ],
   imports: [
     BrowserModule,

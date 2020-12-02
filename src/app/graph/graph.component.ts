@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Exponential } from '../variate-functions/functions/exponential/exponential';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import {
-  FormGroup, FormControl,
+  FormGroup,
 } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-graph',
@@ -11,12 +11,10 @@ import { RandomNumbers } from 'src/app/random-number/random-numbers';
   styleUrls: ['./graph.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GraphComponent implements OnInit {
+export class GraphComponent {
 
-  private exp: Exponential;
   private randomNumbers: RandomNumbers = RandomNumbers.getInstance();
-  private lambdaControl: FormControl = new FormControl(1);
-  formGroup: FormGroup;
+  formGroup!: FormGroup;
 
   values: number[] = [];
   mapValues: Map<number, number> = new Map();
@@ -26,37 +24,23 @@ export class GraphComponent implements OnInit {
   }];
 
     // todos
-    // break out form into function specific
-    // add header buttons for exporting to tsv (value, prob)
+    // X: break out form into function specific
+    // X: add header buttons for exporting to tsv (value, prob)
     // X: add scaling for random numbers
     // X: add more functions (bern, gamma, weibull)
     // readme
 
 
     // nice to have todos
-    // add graphing
+    // X: add graphing
     // add poisson and one other?
     // maybe add state for flow?
 
   constructor(private changeDetectorRef: ChangeDetectorRef) {
-    this.formGroup = new FormGroup({
-      lambda: this.lambdaControl
-    });
-    this.exp = new Exponential(this.lambdaControl.value);
     this.randomNumbers.numbers$.pipe().subscribe(n => {
       this.values = n;
       this.changeDetectorRef.markForCheck();
     });
-  }
-
-  ngOnInit(): void {
-    this.lambdaControl.valueChanges.subscribe((change: number) =>
-      this.exp.setLambda(change)
-    );
-  }
-
-  transform(value: number): number {
-    return this.exp.calculateValue(value);
   }
 
   setResults(results: Map<number, number>): void {
@@ -68,6 +52,13 @@ export class GraphComponent implements OnInit {
     }));
     this.graphSeries[0].series = updatedSeries;
     this.graphSeries = [...this.graphSeries];
+  }
+
+  saveFile(): void {
+    const results: string[] = [];
+    this.mapValues.forEach(((value, key) => results.push(`${key}\t${value}\n`)));
+    const blob = new Blob(results, {type: 'text/plain;charset=utf-8'});
+    saveAs(blob, 'export.tsv');
   }
 
 }

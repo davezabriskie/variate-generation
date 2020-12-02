@@ -24,6 +24,9 @@
   <ng-container *ngSwitchCase="'Normal'">
     <app-normal (resultsTallied)="emitResults($event)"></app-normal>
   </ng-container>
+  <ng-container *ngSwitchCase="'Poisson'">
+    <app-poisson (resultsTallied)="emitResults($event)"></app-poisson>
+  </ng-container>
   <ng-container *ngSwitchCase="'Weibull'">
     <app-weibull (resultsTallied)="emitResults($event)"></app-weibull>
   </ng-container>

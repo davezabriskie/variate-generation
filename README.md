@@ -4,6 +4,7 @@ This project generates the pdf of various variate functions.
 
 ## Supported Variate Functions
 1. Bernoulli
+2. Binomial
 2. Exponential
 3. Gamma
 4. Geometric

@@ -19,6 +19,7 @@ import { GeometricComponent } from './variate-functions/functions/geometric/geom
 import { NormalComponent } from './variate-functions/functions/normal/normal.component';
 import { WeibullComponent } from './variate-functions/functions/weibull/weibull.component';
 import { PoissonComponent } from './variate-functions/functions/poisson/poisson.component';
+import { BinomialComponent } from './variate-functions/functions/binomial/binomial.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { PoissonComponent } from './variate-functions/functions/poisson/poisson.
     GeometricComponent,
     NormalComponent,
     WeibullComponent,
-    PoissonComponent
+    PoissonComponent,
+    BinomialComponent
   ],
   imports: [
     BrowserModule,

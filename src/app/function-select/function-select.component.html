@@ -12,6 +12,9 @@
   <ng-container *ngSwitchCase="'Bernoulli'">
     <app-bernoulli (resultsTallied)="emitResults($event)"></app-bernoulli>
   </ng-container>
+  <ng-container *ngSwitchCase="'Binomial'">
+    <app-binomial (resultsTallied)="emitResults($event)"></app-binomial>
+  </ng-container>
   <ng-container *ngSwitchCase="'Exponential'">
     <app-exponential (resultsTallied)="emitResults($event)"></app-exponential>
   </ng-container>

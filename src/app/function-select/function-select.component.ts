@@ -12,6 +12,7 @@ export class FunctionSelectComponent implements OnInit {
 
   readonly functions = [
     'Bernoulli',
+    'Binomial',
     'Exponential',
     'Gamma',
     'Geometric',

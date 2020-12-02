@@ -19,6 +19,11 @@ export class GraphComponent implements OnInit {
   formGroup: FormGroup;
 
   values: number[] = [];
+  mapValues: Map<number, number> = new Map();
+  graphSeries: any = [{
+    name: 'plot',
+    series: []
+  }];
 
     // todos
     // break out form into function specific
@@ -52,6 +57,17 @@ export class GraphComponent implements OnInit {
 
   transform(value: number): number {
     return this.exp.calculateValue(value);
+  }
+
+  setResults(results: Map<number, number>): void {
+    this.mapValues = results;
+    const updatedSeries: any[] = [];
+    this.mapValues.forEach((value, key) => updatedSeries.push({
+      name: key,
+      value
+    }));
+    this.graphSeries[0].series = updatedSeries;
+    this.graphSeries = [...this.graphSeries];
   }
 
 }

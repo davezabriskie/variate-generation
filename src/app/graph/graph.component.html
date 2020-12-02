@@ -1,11 +1,16 @@
 <div>
-  <form [formGroup]="formGroup">
-      <mat-form-field class="example-full-width">
-        <mat-label>Lambda</mat-label>
-        <input matInput formControlName="lambda" type="number">
-      </mat-form-field>
-    </form>
-  <div *ngFor="let value of values?.slice(0,100)">
-    {{ value }} : {{ this.transform(value) }}
+  <app-function-select (resultsTallied)="setResults($event)"></app-function-select>
+  <div>
+    <ngx-charts-line-chart
+      [xAxis]="true"
+      [yAxis]="true"
+      [results]="graphSeries"
+      >
+    </ngx-charts-line-chart>
+  </div>
+  <div *ngFor="let value of mapValues | keyvalue; let i = index">
+    <div *ngIf="i < 1000">
+      {{ value.key }} : {{ value.value }}
+    </div>
   </div>
 </div>

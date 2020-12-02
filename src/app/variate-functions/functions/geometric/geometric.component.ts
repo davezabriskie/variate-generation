@@ -1,18 +1,17 @@
-import { Component, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { Exponential } from './exponential';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Geometric } from './geometric';
+import { FormControl, FormGroup } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
 
 @Component({
-  selector: 'app-exponential',
-  templateUrl: './exponential.component.html',
-  styleUrls: ['./exponential.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-geometric',
+  templateUrl: './geometric.component.html',
+  styleUrls: ['./geometric.component.less']
 })
-export class ExponentialComponent implements OnInit {
+export class GeometricComponent implements OnInit {
 
-  private exp!: Exponential;
-  private lambdaControl: FormControl = new FormControl(1);
+  private geometric!: Geometric;
+  private probabilityControl: FormControl = new FormControl(0.5);
   private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
   formGroup!: FormGroup;
 
@@ -22,12 +21,12 @@ export class ExponentialComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
-      lambda: this.lambdaControl
+      probability: this.probabilityControl,
     });
-    this.exp = new Exponential(this.lambdaControl.value);
+    this.geometric = new Geometric(this.probabilityControl.value);
     this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
-    this.lambdaControl.valueChanges.subscribe((change: number) => {
-      this.exp.setLambda(change);
+    this.probabilityControl.valueChanges.subscribe((change: number) => {
+      this.geometric.setProbability(change);
       this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
     });
   }
@@ -38,7 +37,6 @@ export class ExponentialComponent implements OnInit {
   }
 
   private transform(value: number): number {
-    return this.exp.calculateValue(value);
+    return this.geometric.calculateValue(value);
   }
-
 }

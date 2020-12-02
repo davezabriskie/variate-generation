@@ -10,13 +10,27 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FunctionParametersComponent } from './function-parameters/function-parameters.component';
 import { ExponentialComponent } from './variate-functions/functions/exponential/exponential.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { FunctionSelectComponent } from './function-select/function-select.component';
+import { MatSelectModule } from '@angular/material/select';
+import { GammaComponent } from './variate-functions/functions/gamma/gamma.component';
+import { BernoulliComponent } from './variate-functions/functions/bernoulli/bernoulli.component';
+import { GeometricComponent } from './variate-functions/functions/geometric/geometric.component';
+import { NormalComponent } from './variate-functions/functions/normal/normal.component';
+import { WeibullComponent } from './variate-functions/functions/weibull/weibull.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GraphComponent,
     FunctionParametersComponent,
-    ExponentialComponent
+    ExponentialComponent,
+    FunctionSelectComponent,
+    GammaComponent,
+    BernoulliComponent,
+    GeometricComponent,
+    NormalComponent,
+    WeibullComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +39,9 @@ import { ExponentialComponent } from './variate-functions/functions/exponential/
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    NgxChartsModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]

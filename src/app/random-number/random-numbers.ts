@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class RandomNumbers {
   private static instance: RandomNumbers;
   private backingRandomNumbers: number[] = [];
-  private sampleSize: number = 100;
+  private sampleSize: number = 150;
   // X: maybe just take in a set of bounds, rand number = lower bound + Math.random() * (upper - lower)
   private lowerBound: number = 0;
   private upperBound: number = 10;

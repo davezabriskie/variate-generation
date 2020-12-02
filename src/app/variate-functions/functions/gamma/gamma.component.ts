@@ -1,18 +1,19 @@
 import { Component, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { Exponential } from './exponential';
+import { Gamma } from './gamma';
+import { FormControl, FormGroup } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
 
 @Component({
-  selector: 'app-exponential',
-  templateUrl: './exponential.component.html',
-  styleUrls: ['./exponential.component.less'],
+  selector: 'app-gamma',
+  templateUrl: './gamma.component.html',
+  styleUrls: ['./gamma.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExponentialComponent implements OnInit {
+export class GammaComponent implements OnInit {
 
-  private exp!: Exponential;
-  private lambdaControl: FormControl = new FormControl(1);
+  private gamma!: Gamma;
+  private alphaControl: FormControl = new FormControl(1);
+  private betaControl: FormControl = new FormControl(1);
   private readonly randomNumbers: RandomNumbers = RandomNumbers.getInstance();
   formGroup!: FormGroup;
 
@@ -22,12 +23,17 @@ export class ExponentialComponent implements OnInit {
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
-      lambda: this.lambdaControl
+      alpha: this.alphaControl,
+      beta: this.betaControl
     });
-    this.exp = new Exponential(this.lambdaControl.value);
+    this.gamma = new Gamma(this.alphaControl.value, this.betaControl.value);
     this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
-    this.lambdaControl.valueChanges.subscribe((change: number) => {
-      this.exp.setLambda(change);
+    this.alphaControl.valueChanges.subscribe((change: number) => {
+      this.gamma.updateShape(change);
+      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+    });
+    this.betaControl.valueChanges.subscribe((change: number) => {
+      this.gamma.updateRate(change);
       this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
     });
   }
@@ -38,7 +44,7 @@ export class ExponentialComponent implements OnInit {
   }
 
   private transform(value: number): number {
-    return this.exp.calculateValue(value);
+    return this.gamma.calculateValue(value);
   }
 
 }

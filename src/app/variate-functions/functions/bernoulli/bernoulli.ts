@@ -14,6 +14,6 @@ export class Bernoulli {
   }
 
   calculateValue(input: number): number {
-    return Math.random() <= this.probability ? 0 : 1;
+    return Math.random() >= this.probability ? 0 : 1;
   }
 }

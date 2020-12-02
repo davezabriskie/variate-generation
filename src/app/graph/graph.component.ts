@@ -24,12 +24,13 @@ export class GraphComponent implements OnInit {
     // break out form into function specific
     // add header buttons for exporting to tsv (value, prob)
     // X: add scaling for random numbers
-    // add more functions (bern, gamma, weibull)
+    // X: add more functions (bern, gamma, weibull)
     // readme
 
 
     // nice to have todos
     // add graphing
+    // add poisson and one other?
     // maybe add state for flow?
 
   constructor(private changeDetectorRef: ChangeDetectorRef) {

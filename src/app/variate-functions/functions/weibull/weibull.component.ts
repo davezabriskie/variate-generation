@@ -2,7 +2,6 @@ import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from
 import { Weibull } from './weibull';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
-import { Gamma } from '../gamma/gamma';
 
 @Component({
   selector: 'app-weibull',
@@ -28,14 +27,14 @@ export class WeibullComponent implements OnInit {
       scale: this.scaleControl
     });
     this.weibull = new Weibull(this.shapeControl.value, this.scaleControl.value);
-    this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     this.shapeControl.valueChanges.subscribe((change: number) => {
       this.weibull.updateShape(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
     this.scaleControl.valueChanges.subscribe((change: number) => {
       this.weibull.updateScale(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

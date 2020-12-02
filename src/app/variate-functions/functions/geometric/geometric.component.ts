@@ -24,10 +24,10 @@ export class GeometricComponent implements OnInit {
       probability: this.probabilityControl,
     });
     this.geometric = new Geometric(this.probabilityControl.value);
-    this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     this.probabilityControl.valueChanges.subscribe((change: number) => {
       this.geometric.setProbability(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

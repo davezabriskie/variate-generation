@@ -25,10 +25,10 @@ export class BernoulliComponent implements OnInit {
       probability: this.probabilityControl
     });
     this.bernoulli = new Bernoulli(this.probabilityControl.value);
-    this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     this.probabilityControl.valueChanges.subscribe((change: number) => {
       this.bernoulli.updateProbability(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

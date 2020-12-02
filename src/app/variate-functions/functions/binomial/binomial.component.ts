@@ -28,14 +28,14 @@ export class BinomialComponent implements OnInit {
       size: this.sizeControl
     });
     this.binomial = new Binomial(this.probabilityControl.value, this.sizeControl.value);
-    this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     this.probabilityControl.valueChanges.subscribe((change: number) => {
       this.binomial.updateProbability(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
     this.sizeControl.valueChanges.subscribe((change: number) => {
       this.binomial.updateSize(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

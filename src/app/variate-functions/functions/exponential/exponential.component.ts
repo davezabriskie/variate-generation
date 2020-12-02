@@ -25,10 +25,10 @@ export class ExponentialComponent implements OnInit {
       lambda: this.lambdaControl
     });
     this.exp = new Exponential(this.lambdaControl.value);
-    this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     this.lambdaControl.valueChanges.subscribe((change: number) => {
       this.exp.setLambda(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

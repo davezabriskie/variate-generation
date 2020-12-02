@@ -25,10 +25,10 @@ export class PoissonComponent implements OnInit {
       lambda: this.lambdaControl
     });
     this.poisson = new Poisson(this.lambdaControl.value);
-    this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     this.lambdaControl.valueChanges.subscribe((change: number) => {
       this.poisson.setLambda(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

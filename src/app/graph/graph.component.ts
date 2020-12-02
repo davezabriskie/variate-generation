@@ -24,7 +24,7 @@ export class GraphComponent {
   }];
 
   constructor(private changeDetectorRef: ChangeDetectorRef) {
-    this.randomNumbers.numbers$.pipe().subscribe(n => {
+    this.randomNumbers.numbers$.subscribe(n => {
       this.values = n;
       this.changeDetectorRef.markForCheck();
     });

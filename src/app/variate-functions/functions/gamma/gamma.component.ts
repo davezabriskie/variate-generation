@@ -27,14 +27,14 @@ export class GammaComponent implements OnInit {
       beta: this.betaControl
     });
     this.gamma = new Gamma(this.alphaControl.value, this.betaControl.value);
-    this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     this.alphaControl.valueChanges.subscribe((change: number) => {
       this.gamma.updateShape(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
     this.betaControl.valueChanges.subscribe((change: number) => {
       this.gamma.updateRate(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

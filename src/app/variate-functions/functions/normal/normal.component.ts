@@ -27,14 +27,14 @@ export class NormalComponent implements OnInit {
       standardDeviation: this.standardDeviationControl
     });
     this.normal = new Normal(this.standardDeviationControl.value, this.meanControl.value);
-    this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+    this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     this.standardDeviationControl.valueChanges.subscribe((change: number) => {
       this.normal.setStandardDeviation(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
     this.meanControl.valueChanges.subscribe((change: number) => {
       this.normal.setMean(change);
-      this.randomNumbers.numbers$.pipe().subscribe(n => this.tallyResults(n));
+      this.randomNumbers.numbers$.subscribe(n => this.tallyResults(n));
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Weibull } from './weibull';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { RandomNumbers } from 'src/app/random-number/random-numbers';
@@ -7,7 +7,8 @@ import { Gamma } from '../gamma/gamma';
 @Component({
   selector: 'app-weibull',
   templateUrl: './weibull.component.html',
-  styleUrls: ['./weibull.component.less']
+  styleUrls: ['./weibull.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WeibullComponent implements OnInit {
 

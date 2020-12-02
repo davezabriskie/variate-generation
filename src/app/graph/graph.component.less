@@ -1,0 +1,22 @@
+.data-container {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  grid-template-rows: 500px;
+  margin-bottom: 20px;
+
+  .chart-container {
+    grid-column: 1;
+  }
+
+  .sample-data-container {
+    border: 1px solid black;
+    border-radius: 3px;
+    background: #fed;
+    grid-column: 2;
+
+    .scrollable {
+      height: calc(100% - 40px);
+      overflow-y: scroll;
+    }
+  }
+}

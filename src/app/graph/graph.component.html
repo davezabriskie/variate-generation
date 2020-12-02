@@ -1,17 +1,24 @@
 <div>
   <app-function-select (resultsTallied)="setResults($event)"></app-function-select>
   <button (click)="saveFile()">Export to TSV</button>
-  <div>
-    <ngx-charts-line-chart
-      [xAxis]="true"
-      [yAxis]="true"
-      [results]="graphSeries"
-      >
-    </ngx-charts-line-chart>
-  </div>
-  <div *ngFor="let value of mapValues | keyvalue; let i = index">
-    <div *ngIf="i < 1000">
-      {{ value.key }} : {{ value.value }}
+  <div class="data-container">
+    <div class="chart-container">
+      <ngx-charts-line-chart
+        [xAxis]="true"
+        [yAxis]="true"
+        [results]="graphSeries"
+        >
+      </ngx-charts-line-chart>
+    </div>
+    <div class="sample-data-container">
+      <h4>First 100 datapoints</h4>
+      <div class="scrollable">
+        <div *ngFor="let value of mapValues | keyvalue; let i = index">
+          <div *ngIf="i < 100">
+            {{ value.key }} : {{ value.value }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

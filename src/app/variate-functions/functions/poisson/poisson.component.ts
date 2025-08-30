@@ -1,10 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Sample } from 'src/app/sample/sample';
+import { SampleService } from 'src/app/sample/sample';
 import { Poisson } from './poisson';
-import { debounce } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { debounceTime, startWith } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-poisson',
   templateUrl: './poisson.component.html',
@@ -14,24 +16,38 @@ import { interval } from 'rxjs';
 export class PoissonComponent implements OnInit {
 
   private poisson!: Poisson;
-  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   lambdaControl: FormControl = new FormControl(1, Validators.min(0.0001));
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 
-  constructor() { }
+  constructor(private sampleService: SampleService) { }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
       lambda: this.lambdaControl
     });
+
     this.poisson = new Poisson(this.lambdaControl.value);
-    this.sample.numbers$.subscribe(n => this.tallyResults(n));
-    this.lambdaControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
-      this.poisson.setLambda(change);
-      this.sample.numbers$.subscribe(n => this.tallyResults(n));
+
+    combineLatest([
+      this.sampleService.numbers$,
+      this.formGroup.valueChanges.pipe(
+        startWith(this.formGroup.value)
+      )
+    ]).pipe(
+      debounceTime(300),
+      untilDestroyed(this)
+    ).subscribe(([numbers, formValues]) => {
+      this.updateDistribution(formValues);
+      this.tallyResults(numbers);
     });
+  }
+
+  private updateDistribution(formValues: any): void {
+    if (formValues.lambda !== undefined) {
+      this.poisson.setLambda(formValues.lambda);
+    }
   }
 
   private tallyResults(inputs: number[]): void {
@@ -42,5 +58,4 @@ export class PoissonComponent implements OnInit {
   private transform(value: number): number {
     return this.poisson.calculateValue(value);
   }
-
 }

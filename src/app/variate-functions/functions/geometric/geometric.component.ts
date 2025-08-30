@@ -1,36 +1,53 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Geometric } from './geometric';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Sample } from 'src/app/sample/sample';
-import { debounce } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { SampleService } from 'src/app/sample/sample';
+import { debounceTime, startWith } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-geometric',
   templateUrl: './geometric.component.html',
-  styleUrls: ['./geometric.component.less']
+  styleUrls: ['./geometric.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeometricComponent implements OnInit {
 
   private geometric!: Geometric;
-  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   probabilityControl: FormControl = new FormControl(0.5, [Validators.min(0.0001), Validators.max(1)]);
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 
-  constructor() { }
+  constructor(private sampleService: SampleService) { }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
       probability: this.probabilityControl,
     });
+
     this.geometric = new Geometric(this.probabilityControl.value);
-    this.sample.numbers$.subscribe(n => this.tallyResults(n));
-    this.probabilityControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
-      this.geometric.setProbability(change);
-      this.sample.numbers$.subscribe(n => this.tallyResults(n));
+
+    combineLatest([
+      this.sampleService.numbers$,
+      this.formGroup.valueChanges.pipe(
+        startWith(this.formGroup.value)
+      )
+    ]).pipe(
+      debounceTime(300),
+      untilDestroyed(this)
+    ).subscribe(([numbers, formValues]) => {
+      this.updateDistribution(formValues);
+      this.tallyResults(numbers);
     });
+  }
+
+  private updateDistribution(formValues: any): void {
+    if (formValues.probability !== undefined) {
+      this.geometric.setProbability(formValues.probability);
+    }
   }
 
   private tallyResults(inputs: number[]): void {

@@ -1,10 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { Bernoulli } from './bernoulli';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Sample } from 'src/app/sample/sample';
-import { debounce } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { SampleService } from 'src/app/sample/sample';
+import { debounceTime, startWith } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-bernoulli',
   templateUrl: './bernoulli.component.html',
@@ -14,24 +16,38 @@ import { interval } from 'rxjs';
 export class BernoulliComponent implements OnInit {
 
   private bernoulli!: Bernoulli;
-  private readonly sample: Sample = Sample.getInstance();
   probabilityControl: FormControl = new FormControl(0.5, [Validators.min(0), Validators.max(1)]);
   formGroup!: FormGroup;
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 
-  constructor() { }
+  constructor(private sampleService: SampleService) { }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
       probability: this.probabilityControl
     });
+
     this.bernoulli = new Bernoulli(this.probabilityControl.value);
-    this.sample.numbers$.subscribe(n => this.tallyResults(n));
-    this.probabilityControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
-      this.bernoulli.updateProbability(change);
-      this.sample.numbers$.subscribe(n => this.tallyResults(n));
+
+    combineLatest([
+      this.sampleService.numbers$,
+      this.formGroup.valueChanges.pipe(
+        startWith(this.formGroup.value)
+      )
+    ]).pipe(
+      debounceTime(300),
+      untilDestroyed(this)
+    ).subscribe(([numbers, formValues]) => {
+      this.updateDistribution(formValues);
+      this.tallyResults(numbers);
     });
+  }
+
+  private updateDistribution(formValues: any): void {
+    if (formValues.probability !== undefined) {
+      this.bernoulli.updateProbability(formValues.probability);
+    }
   }
 
   private tallyResults(inputs: number[]): void {

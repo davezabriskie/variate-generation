@@ -1,7 +1,7 @@
 export class Normal {
 
-  private standardDeviation: number = 1;
-  private mean: number = 0;
+  private standardDeviation = 1;
+  private mean = 0;
 
   constructor(standardDeviation: number, mean: number) {
     this.standardDeviation = standardDeviation;

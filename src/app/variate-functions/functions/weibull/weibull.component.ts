@@ -1,10 +1,12 @@
 import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Weibull } from './weibull';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Sample } from 'src/app/sample/sample';
-import { debounce } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { SampleService } from 'src/app/sample/sample';
+import { debounceTime, startWith } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-weibull',
   templateUrl: './weibull.component.html',
@@ -14,30 +16,43 @@ import { interval } from 'rxjs';
 export class WeibullComponent implements OnInit {
 
   private weibull!: Weibull;
-  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   shapeControl: FormControl = new FormControl(1, Validators.min(0.001));
   scaleControl: FormControl = new FormControl(1, Validators.min(0.001));
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 
-  constructor() { }
+  constructor(private sampleService: SampleService) { }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
       shape: this.shapeControl,
       scale: this.scaleControl
     });
+
     this.weibull = new Weibull(this.shapeControl.value, this.scaleControl.value);
-    this.sample.numbers$.subscribe(n => this.tallyResults(n));
-    this.shapeControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
-      this.weibull.updateShape(change);
-      this.sample.numbers$.subscribe(n => this.tallyResults(n));
+
+    combineLatest([
+      this.sampleService.numbers$,
+      this.formGroup.valueChanges.pipe(
+        startWith(this.formGroup.value)
+      )
+    ]).pipe(
+      debounceTime(300),
+      untilDestroyed(this)
+    ).subscribe(([numbers, formValues]) => {
+      this.updateDistribution(formValues);
+      this.tallyResults(numbers);
     });
-    this.scaleControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
-      this.weibull.updateScale(change);
-      this.sample.numbers$.subscribe(n => this.tallyResults(n));
-    });
+  }
+
+  private updateDistribution(formValues: any): void {
+    if (formValues.shape !== undefined) {
+      this.weibull.updateShape(formValues.shape);
+    }
+    if (formValues.scale !== undefined) {
+      this.weibull.updateScale(formValues.scale);
+    }
   }
 
   private tallyResults(inputs: number[]): void {
@@ -48,5 +63,4 @@ export class WeibullComponent implements OnInit {
   private transform(value: number): number {
     return this.weibull.calculateValue(value);
   }
-
 }

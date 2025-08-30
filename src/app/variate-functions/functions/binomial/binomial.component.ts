@@ -1,10 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { Binomial } from './binomial';
-import { Sample } from 'src/app/sample/sample';
+import { SampleService } from 'src/app/sample/sample';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { debounce } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { debounceTime, startWith } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-binomial',
   templateUrl: './binomial.component.html',
@@ -14,30 +16,43 @@ import { interval } from 'rxjs';
 export class BinomialComponent implements OnInit {
 
   private binomial!: Binomial;
-  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   probabilityControl: FormControl = new FormControl(0.5, [Validators.min(0), Validators.max(1)]);
   sizeControl: FormControl = new FormControl(10, Validators.min(0.0001));
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 
-  constructor() { }
+  constructor(private sampleService: SampleService) { }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
       probability: this.probabilityControl,
       size: this.sizeControl
     });
+
     this.binomial = new Binomial(this.probabilityControl.value, this.sizeControl.value);
-    this.sample.numbers$.pipe(debounce(() => interval(300))).subscribe(n => this.tallyResults(n));
-    this.probabilityControl.valueChanges.subscribe((change: number) => {
-      this.binomial.updateProbability(change);
-      this.sample.numbers$.subscribe(n => this.tallyResults(n));
+
+    combineLatest([
+      this.sampleService.numbers$,
+      this.formGroup.valueChanges.pipe(
+        startWith(this.formGroup.value)
+      )
+    ]).pipe(
+      debounceTime(300),
+      untilDestroyed(this)
+    ).subscribe(([numbers, formValues]) => {
+      this.updateDistribution(formValues);
+      this.tallyResults(numbers);
     });
-    this.sizeControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
-      this.binomial.updateSize(change);
-      this.sample.numbers$.subscribe(n => this.tallyResults(n));
-    });
+  }
+
+  private updateDistribution(formValues: any): void {
+    if (formValues.probability !== undefined) {
+      this.binomial.updateProbability(formValues.probability);
+    }
+    if (formValues.size !== undefined) {
+      this.binomial.updateSize(formValues.size);
+    }
   }
 
   private tallyResults(inputs: number[]): void {

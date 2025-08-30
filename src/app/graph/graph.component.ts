@@ -1,38 +1,47 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import {
   FormGroup,
 } from '@angular/forms';
-import { Sample } from 'src/app/sample/sample';
+import { SampleService } from 'src/app/sample/sample';
+import { GraphSeries, GraphDataPoint } from '../shared/interfaces';
 import { saveAs } from 'file-saver';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-graph',
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GraphComponent {
+export class GraphComponent implements OnInit {
 
-  private sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
 
   values: number[] = [];
   mapValues: Map<number, number> = new Map();
-  graphSeries: any = [{
+  graphSeries: GraphSeries[] = [{
     name: 'plot',
     series: []
   }];
 
-  constructor(private changeDetectorRef: ChangeDetectorRef) {
-    this.sample.numbers$.subscribe(n => {
-      this.values = n;
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private sampleService: SampleService
+  ) {}
+
+  ngOnInit(): void {
+    this.sampleService.numbers$.pipe(
+      untilDestroyed(this)
+    ).subscribe(numbers => {
+      this.values = numbers;
       this.changeDetectorRef.markForCheck();
     });
   }
 
   setResults(results: Map<number, number>): void {
     this.mapValues = results;
-    const updatedSeries: any[] = [];
+    const updatedSeries: GraphDataPoint[] = [];
     this.mapValues.forEach((value, key) => updatedSeries.push({
       name: key,
       value

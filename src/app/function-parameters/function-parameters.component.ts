@@ -1,9 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Sample } from '../sample/sample';
-import { debounce } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { SampleService } from '../sample/sample';
+import { debounceTime } from 'rxjs/operators';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-function-parameters',
   templateUrl: './function-parameters.component.html',
@@ -12,12 +13,11 @@ import { interval } from 'rxjs';
 })
 export class FunctionParametersComponent implements OnInit {
 
-  private sample: Sample = Sample.getInstance();
   private lowerBoundControl: FormControl = new FormControl(0);
   private upperBoundControl: FormControl = new FormControl(10);
   formGroup!: FormGroup;
 
-  constructor() { }
+  constructor(private sampleService: SampleService) { }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
@@ -29,9 +29,14 @@ export class FunctionParametersComponent implements OnInit {
   }
 
   private setUpControlListeners(): void {
-    this.lowerBoundControl.valueChanges.pipe(debounce(() => interval(300)))
-      .subscribe(c => this.sample.updateLowerBound(c));
-    this.upperBoundControl.valueChanges.pipe(debounce(() => interval(300)))
-      .subscribe(c => this.sample.updateUpperBound(c));
+    this.lowerBoundControl.valueChanges.pipe(
+      debounceTime(300),
+      untilDestroyed(this)
+    ).subscribe(value => this.sampleService.updateLowerBound(value));
+
+    this.upperBoundControl.valueChanges.pipe(
+      debounceTime(300),
+      untilDestroyed(this)
+    ).subscribe(value => this.sampleService.updateUpperBound(value));
   }
 }

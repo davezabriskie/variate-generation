@@ -1,24 +1,19 @@
+import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export class Sample {
+@Injectable({
+  providedIn: 'root'
+})
+export class SampleService {
 
-  private static instance: Sample;
-  private sampleSize: number = 250;
-  private lowerBound: number = 0;
-  private upperBound: number = 10;
-  private delta: number = 10;
+  private sampleSize = 250;
+  private lowerBound = 0;
+  private upperBound = 10;
+  private delta = 10;
   numbers$: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
 
-  private constructor() {
+  constructor() {
     this.buildNumbers();
-  }
-
-  static getInstance(): Sample {
-    if (!Sample.instance) {
-      Sample.instance = new Sample();
-    }
-
-    return Sample.instance;
   }
 
   generateNewArray(size: number): void {

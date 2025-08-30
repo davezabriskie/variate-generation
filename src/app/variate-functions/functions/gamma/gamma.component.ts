@@ -1,10 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy, EventEmitter, Output } from '@angular/core';
 import { Gamma } from './gamma';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Sample } from 'src/app/sample/sample';
-import { debounce } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { SampleService } from 'src/app/sample/sample';
+import { debounceTime, startWith } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-gamma',
   templateUrl: './gamma.component.html',
@@ -14,30 +16,43 @@ import { interval } from 'rxjs';
 export class GammaComponent implements OnInit {
 
   private gamma!: Gamma;
-  private readonly sample: Sample = Sample.getInstance();
   formGroup!: FormGroup;
   alphaControl: FormControl = new FormControl(1, Validators.min(0.0001));
   betaControl: FormControl = new FormControl(1, Validators.min(0.0001));
 
   @Output() resultsTallied: EventEmitter<Map<number, number>> = new EventEmitter();
 
-  constructor() { }
+  constructor(private sampleService: SampleService) { }
 
   ngOnInit(): void {
     this.formGroup = new FormGroup({
       alpha: this.alphaControl,
       beta: this.betaControl
     });
+
     this.gamma = new Gamma(this.alphaControl.value, this.betaControl.value);
-    this.sample.numbers$.subscribe(n => this.tallyResults(n));
-    this.alphaControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
-      this.gamma.updateShape(change);
-      this.sample.numbers$.subscribe(n => this.tallyResults(n));
+
+    combineLatest([
+      this.sampleService.numbers$,
+      this.formGroup.valueChanges.pipe(
+        startWith(this.formGroup.value)
+      )
+    ]).pipe(
+      debounceTime(300),
+      untilDestroyed(this)
+    ).subscribe(([numbers, formValues]) => {
+      this.updateDistribution(formValues);
+      this.tallyResults(numbers);
     });
-    this.betaControl.valueChanges.pipe(debounce(() => interval(300))).subscribe((change: number) => {
-      this.gamma.updateRate(change);
-      this.sample.numbers$.subscribe(n => this.tallyResults(n));
-    });
+  }
+
+  private updateDistribution(formValues: any): void {
+    if (formValues.alpha !== undefined) {
+      this.gamma.updateShape(formValues.alpha);
+    }
+    if (formValues.beta !== undefined) {
+      this.gamma.updateRate(formValues.beta);
+    }
   }
 
   private tallyResults(inputs: number[]): void {
@@ -48,5 +63,4 @@ export class GammaComponent implements OnInit {
   private transform(value: number): number {
     return this.gamma.calculateValue(value);
   }
-
 }
